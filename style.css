@@ -90,3 +90,9 @@ button {
   border: 1px black solid;
   background: white;
 }
+
+/* убрать стрелки у инпута для указания цифр */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
