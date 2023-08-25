@@ -3,6 +3,7 @@ let firstNumber = "";
 let secondNumber = "";
 let operation = false;
 let input = document.getElementById("input");
+let temporaryScreen = document.getElementById("right_view");
 
 let buttons = document.getElementById("panel");
 
@@ -29,33 +30,36 @@ let division = (a, b) => a / b;
 
 let operate = (number1, number2, method) => method(number1, number2);
 
-// alert(operate(5, 5, addition));
-buttons.addEventListener("mouseover", function (e) {
-  e.target.style.backgroundColor = "rgb(172, 163, 163)";
-});
-
-buttons.addEventListener("mouseout", function (e) {
-  e.target.style.backgroundColor = "white";
-});
-
-buttons.addEventListener("mouseup", function (e) {
-  e.target.style.backgroundColor = "white";
-});
-
-buttons.addEventListener("mousedown", function (e) {
-  e.target.style.backgroundColor = "rgb(139, 132, 132)";
+// функция для смены подсветки активной клавиши
+let events = ["mouseover", "mouseout", "mouseup", "mousedown"];
+let colors = ["rgb(172, 163, 163)", "white", "white", "rgb(139, 132, 132)"];
+events.forEach((event, index) => {
+  buttons.addEventListener(event, function (e) {
+    e.target.style.backgroundColor = colors[index];
+  });
 });
 
 //вызывается, когда нажата соответствующая кнопка с цифрой для передачи данных в переменную и обновления экрана
 function updateNumber(buttonValue) {
-  if (operation) {
+  if (!operation) {
     firstNumber += buttonValue;
     input.value = firstNumber;
   } else {
     secondNumber += buttonValue;
     input.value = secondNumber;
   }
+  console.log("1 number " + firstNumber);
+  console.log("2 number " + secondNumber);
 }
+
+//функция сброса
+let clear = () => {
+  firstNumber = "";
+  secondNumber = "";
+  operation = false;
+  input.value = 0;
+  temporaryScreen.textContent = "";
+};
 
 //функция для ввода значений с калькулятора
 buttons.addEventListener("click", function (e) {
@@ -65,21 +69,44 @@ buttons.addEventListener("click", function (e) {
   }
   switch (e.target.className) {
     case "clear":
-      firstNumber = "";
-      secondNumber = "";
-      operation = false;
-      input.value = 0;
+      clear();
       break;
     case "backspace":
-      firstNumber = "";
-      secondNumber = "";
       let test = input.value;
-      if (input.value.length == 1) {
-        input.value = 0;
-      } else {
+      if (secondNumber == "" && firstNumber.length > 1) {
+        firstNumber = firstNumber.slice(0, firstNumber.length - 1);
         input.value = test.slice(0, test.length - 1);
-        console.log(input.value);
+        console.log(firstNumber);
+      } else if (secondNumber == "" && firstNumber.length == 1) {
+        firstNumber = "";
+        input.value = 0;
+        console.log(firstNumber);
+      } else if (firstNumber.length > 0 && secondNumber.length > 1) {
+        secondNumber = secondNumber.slice(0, secondNumber.length - 1);
+        input.value = test.slice(0, test.length - 1);
+        console.log(secondNumber);
+      } else if (secondNumber.length == 1 && firstNumber.length > 0) {
+        secondNumber = "";
+        input.value = 0;
+        console.log(firstNumber);
       }
+      break;
+    case "plus":
+      if (operation) {
+        firstNumber = operate(
+          Number(firstNumber),
+          Number(secondNumber),
+          addition
+        );
+        firstNumber = firstNumber.toString();
+        secondNumber = "";
+      }
+      operation = true;
+      input.value = 0;
+      temporaryScreen.textContent = firstNumber;
+      console.log("1 number " + firstNumber);
+      console.log("2 number " + secondNumber);
+      console.log(operation);
       break;
   }
 });
