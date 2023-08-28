@@ -52,7 +52,7 @@ let buttonChange = function () {
   signNumber = -signNumber;
 };
 
-//функция для =
+//функция для кнопки =
 let buttonEquals = function () {
   if (start_operation && secondNumber !== "") {
     let result = operate(Number(firstNumber), Number(secondNumber), operation);
@@ -76,23 +76,15 @@ let buttonBackspace = function () {
   if (firstNumber.length > 1 && secondNumber == "" && !start_operation) {
     firstNumber = firstNumber.slice(0, firstNumber.length - 1);
     input.value = firstNumber;
-    console.log("1 number " + firstNumber);
-    console.log("2 number " + secondNumber);
   } else if (firstNumber.length == 1 && secondNumber == "") {
     firstNumber = "";
     input.value = 0;
-    console.log("1 number " + firstNumber);
-    console.log("2 number " + secondNumber);
   } else if (firstNumber.length > 0 && secondNumber.length > 1) {
     secondNumber = secondNumber.slice(0, secondNumber.length - 1);
     input.value = secondNumber;
-    console.log("1 number " + firstNumber);
-    console.log("2 number " + secondNumber);
   } else if (firstNumber.length > 0 && secondNumber.length == 1) {
     secondNumber = "";
     input.value = 0;
-    console.log("1 number " + firstNumber);
-    console.log("2 number " + secondNumber);
   }
 };
 
@@ -118,9 +110,7 @@ let buttonAction = function (action) {
   lastOperation = action;
 };
 
-//Основная функция калькулятор
-// let operate = (number1, number2, method) => method(number1, number2);
-
+//Основная функция калькулятора с проверкой деления на 0 и некорректного ввода
 let operate = (number1, number2, method) => {
   if (isNaN(number1) || isNaN(number2)) {
     alert("Ошибка: неверный формат числа");
@@ -152,8 +142,6 @@ function updateNumber(buttonValue) {
     secondNumber += buttonValue;
     input.value = secondNumber;
   }
-  console.log("1 number " + firstNumber);
-  console.log("2 number " + secondNumber);
 }
 
 //функция для нажатия клавиш
@@ -186,8 +174,6 @@ buttons.addEventListener("click", function (e) {
       buttonChange();
       break;
     case "equals":
-      console.log("1 number " + firstNumber);
-      console.log("2 number " + secondNumber);
       buttonEquals();
       break;
   }
