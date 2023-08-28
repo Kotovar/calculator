@@ -3,6 +3,7 @@ let firstNumber = "";
 let secondNumber = "";
 let start_operation = false;
 let operation;
+let lastOperation;
 let input = document.getElementById("input");
 let temporaryScreen = document.getElementById("right_view");
 let buttons = document.getElementById("panel");
@@ -55,29 +56,25 @@ let buttonBackspace = function () {
     console.log(firstNumber);
   }
 };
-
-let buttonPlus = function () {
-  if (start_operation) {
-    firstNumber = operate(Number(firstNumber), Number(secondNumber), operation);
-    firstNumber = firstNumber.toString();
-    secondNumber = "";
+let buttonAction = function (action) {
+  if (start_operation && secondNumber !== "") {
+    let result = operate(Number(firstNumber), Number(secondNumber), operation);
+    if (result % 1 !== 0 && lastOperation == division) {
+      firstNumber = result.toFixed(7);
+    } else if (result % 1 !== 0) {
+      firstNumber = result.toFixed(2);
+    } else {
+      firstNumber = result;
+    }
   }
-  operation = addition;
-  start_operation = true;
-  input.value = 0;
-  temporaryScreen.textContent = firstNumber;
-};
-
-let buttonSubtract = function () {
-  if (start_operation) {
-    firstNumber = operate(Number(firstNumber), Number(secondNumber), operation);
-    firstNumber = firstNumber.toString();
-    secondNumber = "";
+  if (firstNumber !== "") {
+    operation = action;
+    start_operation = true;
+    input.value = 0;
+    temporaryScreen.textContent = firstNumber;
   }
-  operation = subtraction;
-  start_operation = true;
-  input.value = 0;
-  temporaryScreen.textContent = firstNumber;
+  secondNumber = "";
+  lastOperation = action;
 };
 
 //Основная функция калькулятор
@@ -110,10 +107,16 @@ buttons.addEventListener("click", function (e) {
       buttonBackspace();
       break;
     case "plus":
-      buttonPlus();
+      buttonAction(addition);
       break;
     case "subtract":
-      buttonSubtract();
+      buttonAction(subtraction);
+      break;
+    case "multiply":
+      buttonAction(multiplication);
+      break;
+    case "divide":
+      buttonAction(division);
       break;
   }
 });
