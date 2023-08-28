@@ -4,6 +4,7 @@ let secondNumber = "";
 let start_operation = false;
 let operation;
 let lastOperation;
+let dotUse = false;
 let input = document.getElementById("input");
 let temporaryScreen = document.getElementById("right_view");
 let buttons = document.getElementById("panel");
@@ -19,6 +20,7 @@ const buttonValues = {
   eight: 8,
   nine: 9,
   zero: 0,
+  dot: ".",
 };
 
 // Функции базовых операторов + , - , * , /
@@ -27,7 +29,7 @@ let subtraction = (a, b) => a - b;
 let multiplication = (a, b) => a * b;
 let division = (a, b) => a / b;
 
-// функции для не числовых клавиш
+// функция сброс
 let clear = () => {
   firstNumber = "";
   secondNumber = "";
@@ -36,33 +38,72 @@ let clear = () => {
   temporaryScreen.textContent = "";
 };
 
+//функция для замены знака -+
+let buttonChange = function () {
+  let signNumber = 1;
+  signNumber = -signNumber;
+  if (!start_operation) {
+    firstNumber = firstNumber * signNumber;
+    input.value = firstNumber;
+  } else {
+    secondNumber = secondNumber * signNumber;
+    input.value = secondNumber;
+  }
+  signNumber = -signNumber;
+};
+
+//функция для =
+let buttonEquals = function () {
+  if (start_operation && secondNumber !== "") {
+    let result = operate(Number(firstNumber), Number(secondNumber), operation);
+    input.style.fontWeight = "bold";
+    if (result % 1 !== 0 && lastOperation == division) {
+      firstNumber = result.toFixed(7);
+    } else if (result % 1 !== 0) {
+      firstNumber = result.toFixed(5);
+    } else {
+      firstNumber = result;
+    }
+  }
+  secondNumber = "";
+  input.value = firstNumber;
+};
+
+//функция для backspace
 let buttonBackspace = function () {
-  let test = input.value;
-  if (firstNumber.length > 1 && secondNumber == "") {
+  firstNumber = firstNumber.toString();
+  secondNumber = secondNumber.toString();
+  if (firstNumber.length > 1 && secondNumber == "" && !start_operation) {
     firstNumber = firstNumber.slice(0, firstNumber.length - 1);
-    input.value = test.slice(0, test.length - 1);
-    console.log(firstNumber);
+    input.value = firstNumber;
+    console.log("1 number " + firstNumber);
+    console.log("2 number " + secondNumber);
   } else if (firstNumber.length == 1 && secondNumber == "") {
     firstNumber = "";
     input.value = 0;
-    console.log(firstNumber);
+    console.log("1 number " + firstNumber);
+    console.log("2 number " + secondNumber);
   } else if (firstNumber.length > 0 && secondNumber.length > 1) {
     secondNumber = secondNumber.slice(0, secondNumber.length - 1);
-    input.value = test.slice(0, test.length - 1);
-    console.log(secondNumber);
+    input.value = secondNumber;
+    console.log("1 number " + firstNumber);
+    console.log("2 number " + secondNumber);
   } else if (firstNumber.length > 0 && secondNumber.length == 1) {
     secondNumber = "";
     input.value = 0;
-    console.log(firstNumber);
+    console.log("1 number " + firstNumber);
+    console.log("2 number " + secondNumber);
   }
 };
+
+//функция для операций = - * /
 let buttonAction = function (action) {
   if (start_operation && secondNumber !== "") {
     let result = operate(Number(firstNumber), Number(secondNumber), operation);
     if (result % 1 !== 0 && lastOperation == division) {
       firstNumber = result.toFixed(7);
     } else if (result % 1 !== 0) {
-      firstNumber = result.toFixed(2);
+      firstNumber = result.toFixed(5);
     } else {
       firstNumber = result;
     }
@@ -78,11 +119,33 @@ let buttonAction = function (action) {
 };
 
 //Основная функция калькулятор
-let operate = (number1, number2, method) => method(number1, number2);
+// let operate = (number1, number2, method) => method(number1, number2);
+
+let operate = (number1, number2, method) => {
+  if (isNaN(number1) || isNaN(number2)) {
+    alert("Ошибка: неверный формат числа");
+    clear();
+    return "";
+  }
+  if (method == division && number2 == 0) {
+    alert("Ошибка: деление на ноль");
+    clear();
+    return "";
+  }
+  return method(number1, number2);
+};
 
 //вызывается, когда нажата соответствующая кнопка с цифрой для передачи данных в переменную и обновления экрана
 function updateNumber(buttonValue) {
-  if (!start_operation) {
+  if (buttonValue == ".") {
+    if (!start_operation && firstNumber.indexOf(".") == -1) {
+      input.value = firstNumber;
+      firstNumber += buttonValue;
+    } else if (start_operation && secondNumber.indexOf(".") == -1) {
+      input.value = secondNumber;
+      secondNumber += buttonValue;
+    }
+  } else if (!start_operation) {
     firstNumber += buttonValue;
     input.value = firstNumber;
   } else {
@@ -95,6 +158,7 @@ function updateNumber(buttonValue) {
 
 //функция для нажатия клавиш
 buttons.addEventListener("click", function (e) {
+  input.style.fontWeight = "400";
   if (e.target.className in buttonValues) {
     updateNumber(buttonValues[e.target.className]);
     return;
@@ -117,6 +181,14 @@ buttons.addEventListener("click", function (e) {
       break;
     case "divide":
       buttonAction(division);
+      break;
+    case "change":
+      buttonChange();
+      break;
+    case "equals":
+      console.log("1 number " + firstNumber);
+      console.log("2 number " + secondNumber);
+      buttonEquals();
       break;
   }
 });
