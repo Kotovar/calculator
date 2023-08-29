@@ -1,7 +1,9 @@
+/* Сброс стилей css */
 * {
   padding: 0px;
   margin: 0px;
   border: none;
+  outline: none;
 }
 
 *,
@@ -10,36 +12,36 @@
   box-sizing: border-box;
 }
 
-h1 {
-  text-align: center;
-  margin: 2rem;
+/* убрать стрелки у инпута для указания цифр */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }
 
 #main_form {
-  width: 500px;
-  height: 600px;
-  margin: 0 auto;
+  width: 22vw;
+  height: 60vh;
+  margin: 5rem auto;
   position: relative;
   border: 5px black solid;
   border-radius: 1rem;
 }
 
+/* Настройки экрана */
 #screen {
-  border-bottom: 5px black solid;
-  border-radius: 1rem 1rem 0 0;
+  border-bottom: 15px black solid;
   position: absolute;
   width: 100%;
   height: 20%;
 }
-#panel {
-  border-radius: 0 0 1rem 1rem;
-  position: absolute;
-  width: 100%;
-  height: 80%;
-  top: 20%;
+
+#top_view {
+  text-align: right;
+  margin: 1rem 1rem 0 0;
+  font-size: 1rem;
 }
 
-#temp_decision {
+#top_div {
   position: absolute;
   width: 100%;
   height: 40%;
@@ -52,26 +54,20 @@ h1 {
   top: 40%;
 }
 
-#right_view {
-  text-align: right;
-  margin: 1rem 1rem 0 0;
-  font-size: 1.3rem;
-}
-
 #input {
   font-size: 1.5rem;
   text-align: right;
-  display: block;
-  position: absolute;
   width: 100%;
-  border: none;
   padding: 1rem;
 }
-#input:focus {
-  outline: none;
-}
 
+/* Настройки панели ввода с кнопками */
 #panel {
+  background-color: black;
+  position: absolute;
+  width: 100%;
+  height: 80%;
+  top: 20%;
   display: grid;
   grid-template-columns: 20% 20% 20% 20% 20%;
   grid-template-rows: auto;
@@ -82,6 +78,7 @@ h1 {
     "zero dot change divide equals";
 }
 
+/* Растянуть кнопку РАВНО на 2 блока */
 .equals {
   grid-area: equals;
 }
@@ -89,10 +86,5 @@ h1 {
 button {
   border: 1px black solid;
   background: white;
-}
-
-/* убрать стрелки у инпута для указания цифр */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
+  border-radius: 8px;
 }

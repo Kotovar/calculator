@@ -1,14 +1,12 @@
 //переменные
-let firstNumber = "";
-let secondNumber = "";
-let start_operation = false;
-let operation;
-let lastOperation;
-let dotUse = false;
+let firstNumber = ""; //переменная для хранения первого числа
+let secondNumber = ""; //переменная для хранения второго числа
+let start_operation = false; //переменная для проверки, было ли введено первое число
 let input = document.getElementById("input");
-let temporaryScreen = document.getElementById("right_view");
+let temporaryScreen = document.getElementById("top_view");
 let buttons = document.getElementById("panel");
 
+//объекты цифр и переход на дробные числа
 const buttonValues = {
   one: 1,
   two: 2,
@@ -23,11 +21,20 @@ const buttonValues = {
   dot: ".",
 };
 
-// // Функции базовых операторов + , - , * , /
-let addition = (a, b) => a + b;
-let subtraction = (a, b) => a - b;
-let multiplication = (a, b) => a * b;
-let division = (a, b) => a / b;
+//запрет на ввод буквы с клавиатуры
+input.addEventListener("input", function () {
+  this.value = this.value.replace(/[a-zA-Z]/g, "");
+});
+
+// Функции базовых операторов + , - , * , /
+const operators = {
+  addition: (a, b) => a + b,
+  subtraction: (a, b) => a - b,
+  multiplication: (a, b) => a * b,
+  division: (a, b) => a / b,
+  operation: "",
+  lastOperation: "",
+};
 
 // функция сброс
 let clear = () => {
@@ -52,12 +59,16 @@ let buttonChange = function () {
   signNumber = -signNumber;
 };
 
-//функция для кнопки =
+//функция для кнопки "Равно" =
 let buttonEquals = function () {
   if (start_operation && secondNumber !== "") {
-    let result = operate(Number(firstNumber), Number(secondNumber), operation);
+    let result = operate(
+      Number(firstNumber),
+      Number(secondNumber),
+      operators.operation
+    );
     input.style.fontWeight = "bold";
-    if (result % 1 !== 0 && lastOperation == division) {
+    if (result % 1 !== 0 && operators.lastOperation == operators.division) {
       firstNumber = result.toFixed(7);
     } else if (result % 1 !== 0) {
       firstNumber = result.toFixed(5);
@@ -76,6 +87,8 @@ let buttonBackspace = function () {
   if (firstNumber.length > 1 && secondNumber == "" && !start_operation) {
     firstNumber = firstNumber.slice(0, firstNumber.length - 1);
     input.value = firstNumber;
+    console.log(firstNumber);
+    console.log(input.value);
   } else if (firstNumber.length == 1 && secondNumber == "") {
     firstNumber = "";
     input.value = 0;
@@ -91,8 +104,12 @@ let buttonBackspace = function () {
 //функция для операций = - * /
 let buttonAction = function (action) {
   if (start_operation && secondNumber !== "") {
-    let result = operate(Number(firstNumber), Number(secondNumber), operation);
-    if (result % 1 !== 0 && lastOperation == division) {
+    let result = operate(
+      Number(firstNumber),
+      Number(secondNumber),
+      operators.operation
+    );
+    if (result % 1 !== 0 && operators.lastOperation == operators.division) {
       firstNumber = result.toFixed(7);
     } else if (result % 1 !== 0) {
       firstNumber = result.toFixed(5);
@@ -101,13 +118,13 @@ let buttonAction = function (action) {
     }
   }
   if (firstNumber !== "") {
-    operation = action;
+    operators.operation = action;
     start_operation = true;
     input.value = 0;
     temporaryScreen.textContent = firstNumber;
   }
   secondNumber = "";
-  lastOperation = action;
+  operators.lastOperation = action;
 };
 
 //Основная функция калькулятора с проверкой деления на 0 и некорректного ввода
@@ -117,7 +134,7 @@ let operate = (number1, number2, method) => {
     clear();
     return "";
   }
-  if (method == division && number2 == 0) {
+  if (method == operators.division && number2 == 0) {
     alert("Ошибка: деление на ноль");
     clear();
     return "";
@@ -146,7 +163,7 @@ function updateNumber(buttonValue) {
 
 //функция для нажатия клавиш
 buttons.addEventListener("click", function (e) {
-  input.style.fontWeight = "400";
+  input.style.fontWeight = "400"; //сброс к обычной толщине шрифта после использования кнопки "="
   if (e.target.className in buttonValues) {
     updateNumber(buttonValues[e.target.className]);
     return;
@@ -159,16 +176,16 @@ buttons.addEventListener("click", function (e) {
       buttonBackspace();
       break;
     case "plus":
-      buttonAction(addition);
+      buttonAction(operators.addition);
       break;
     case "subtract":
-      buttonAction(subtraction);
+      buttonAction(operators.subtraction);
       break;
     case "multiply":
-      buttonAction(multiplication);
+      buttonAction(operators.multiplication);
       break;
     case "divide":
-      buttonAction(division);
+      buttonAction(operators.division);
       break;
     case "change":
       buttonChange();
@@ -189,6 +206,8 @@ let events = ["mouseover", "mouseout", "mouseup", "mousedown"];
 let colors = ["rgb(172, 163, 163)", "white", "white", "rgb(139, 132, 132)"];
 events.forEach((event, index) => {
   buttons.addEventListener(event, function (e) {
-    e.target.style.backgroundColor = colors[index];
+    if (e.target.id !== "panel") {
+      e.target.style.backgroundColor = colors[index];
+    }
   });
 });
