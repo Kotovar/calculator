@@ -19,7 +19,7 @@ input::-webkit-inner-spin-button {
 }
 
 #main_form {
-  width: 22vw;
+  width: max(300px, 30vw);
   height: 60vh;
   margin: 5rem auto;
   position: relative;
@@ -37,7 +37,7 @@ input::-webkit-inner-spin-button {
 
 #top_view {
   text-align: right;
-  margin: 1rem 1rem 0 0;
+  margin: 0.5rem;
   font-size: 1rem;
 }
 
